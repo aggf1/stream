@@ -15,7 +15,7 @@ app = Flask(__name__)
 # Set environment variables
 PROJECT_URL = os.environ.get('URL', '')
 INTERVAL_SECONDS = int(os.environ.get("TIME", 120)) 
-PORT = int(os.environ.get('SERVER_PORT') or os.environ.get('PORT') or 5000)
+PORT = 5000
 
 # http server
 class MyHandler(http.server.SimpleHTTPRequestHandler):
