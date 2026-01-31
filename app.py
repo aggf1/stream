@@ -337,78 +337,9 @@ async def extract_domains():
         except Exception as e:
             print(f'Error reading boot.log: {e}')
 
-# Upload nodes to subscription service
-def upload_nodes():
-    if UPLOAD_URL and PROJECT_URL:
-        subscription_url = f"{PROJECT_URL}/{SUB_PATH}"
-        json_data = {
-            "subscription": [subscription_url]
-        }
-        
-        try:
-            response = requests.post(
-                f"{UPLOAD_URL}/api/add-subscriptions",
-                json=json_data,
-                headers={"Content-Type": "application/json"}
-            )
-            
-            if response.status_code == 200:
-                print('Subscription uploaded successfully')
-        except Exception as e:
-            pass
+
     
-    elif UPLOAD_URL:
-        if not os.path.exists(list_path):
-            return
-        
-        with open(list_path, 'r') as f:
-            content = f.read()
-        
-        nodes = [line for line in content.split('\n') if any(protocol in line for protocol in ['vless://', 'vmess://', 'trojan://', 'hysteria2://', 'tuic://'])]
-        
-        if not nodes:
-            return
-        
-        json_data = json.dumps({"nodes": nodes})
-        
-        try:
-            response = requests.post(
-                f"{UPLOAD_URL}/api/add-nodes",
-                data=json_data,
-                headers={"Content-Type": "application/json"}
-            )
-            
-            if response.status_code == 200:
-                print('Nodes uploaded successfully')
-        except:
-            return None
-    else:
-        return
-    
-# Send notification to Telegram
-def send_telegram():
-    if not BOT_TOKEN or not CHAT_ID:
-        # print('TG variables is empty, Skipping push nodes to TG')
-        return
-    
-    try:
-        with open(sub_path, 'r') as f:
-            message = f.read()
-        
-        url = f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage"
-        
-        escaped_name = re.sub(r'([_*\[\]()~>#+=|{}.!\-])', r'\\\1', NAME)
-        
-        params = {
-            "chat_id": CHAT_ID,
-            "text": f"**{escaped_name}节点推送通知**\n{message}",
-            "parse_mode": "MarkdownV2"
-        }
-        
-        requests.post(url, params=params)
-        print('Telegram message sent successfully')
-    except Exception as e:
-        print(f'Failed to send Telegram message: {e}')
+
 
     
 # Main function to start the server
