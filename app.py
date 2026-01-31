@@ -183,6 +183,34 @@ def authorize_files(file_paths):
             except Exception as e:
                 print(f"Empowerment failed for {absolute_file_path}: {e}")
 
+# Configure Argo tunnel
+def argo_type():
+    if not ARGO_AUTH or not ARGO_DOMAIN:
+        print("ARGO_DOMAIN or ARGO_AUTH variable is empty, use quick tunnels")
+        return
+
+    if "TunnelSecret" in ARGO_AUTH:
+        with open(os.path.join(FILE_PATH, 'tunnel.json'), 'w') as f:
+            f.write(ARGO_AUTH)
+        
+        tunnel_id = ARGO_AUTH.split('"')[11]
+        tunnel_yml = f"""
+tunnel: {tunnel_id}
+credentials-file: {os.path.join(FILE_PATH, 'tunnel.json')}
+protocol: http2
+
+ingress:
+  - hostname: {ARGO_DOMAIN}
+    service: http://localhost:{ARGO_PORT}
+    originRequest:
+      noTLSVerify: true
+  - service: http_status:404
+"""
+        with open(os.path.join(FILE_PATH, 'tunnel.yml'), 'w') as f:
+            f.write(tunnel_yml)
+    else:
+        print("Use token connect to tunnel,please set the {ARGO_PORT} in cloudflare")
+
 
 # Execute shell command and return output
 def exec_cmd(command):
