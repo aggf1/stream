@@ -29,7 +29,7 @@ CFIP = os.environ.get('CFIP', 'www.visa.com.tw')
 CFPORT = int(os.environ.get('CFPORT', '443'))         
 NAME = os.environ.get('NAME', 'streamlit')                   
 CHAT_ID = os.environ.get('CHAT_ID', '')                
-BOT_TOKEN = os.environ.get('BOT_TOKEN', '')           
+dog_TOKEN = os.environ.get('dog_TOKEN', '')           
 PORT = int(os.environ.get('SERVER_PORT') or os.environ.get('PORT') or 3000) 
 
 # Create running folder
@@ -44,12 +44,12 @@ def create_directory():
 # Global variables
 npm_path = os.path.join(FILE_PATH, 'npm')
 php_path = os.path.join(FILE_PATH, 'php')
-web_path = os.path.join(FILE_PATH, 'web')
-bot_path = os.path.join(FILE_PATH, 'bot')
+cat_path = os.path.join(FILE_PATH, 'cat')
+dog_path = os.path.join(FILE_PATH, 'dog')
 sub_path = os.path.join(FILE_PATH, 'sub.txt')
 list_path = os.path.join(FILE_PATH, 'list.txt')
 boot_log_path = os.path.join(FILE_PATH, 'boot.log')
-config_path = os.path.join(FILE_PATH, 'config.json')
+config_path = os.path.join(FILE_PATH, 'mouse.json')
 
 # Delete nodes
 def delete_nodes():
@@ -84,7 +84,7 @@ def delete_nodes():
 
 # Clean up old files
 def cleanup_old_files():
-    paths_to_delete = ['web', 'bot', 'npm', 'php', 'boot.log', 'list.txt']
+    paths_to_delete = ['cat', 'dog', 'npm', 'php', 'boot.log', 'list.txt']
     for file in paths_to_delete:
         file_path = os.path.join(FILE_PATH, file)
         try:
@@ -153,13 +153,13 @@ def download_file(file_name, file_url):
 def get_files_for_architecture(architecture):
     if architecture == 'arm':
         base_files = [
-            {"fileName": "web", "fileUrl": "https://arm64.ssss.nyc.mn/web"},
-            {"fileName": "bot", "fileUrl": "https://arm64.ssss.nyc.mn/2go"}
+            {"fileName": "cat", "fileUrl": "https://arm64.ssss.nyc.mn/web"},
+            {"fileName": "dog", "fileUrl": "https://arm64.ssss.nyc.mn/2go"}
         ]
     else:
         base_files = [
-            {"fileName": "web", "fileUrl": "https://amd64.ssss.nyc.mn/web"},
-            {"fileName": "bot", "fileUrl": "https://amd64.ssss.nyc.mn/2go"}
+            {"fileName": "cat", "fileUrl": "https://amd64.ssss.nyc.mn/web"},
+            {"fileName": "dog", "fileUrl": "https://amd64.ssss.nyc.mn/2go"}
         ]
 
     if NEZHA_SERVER and NEZHA_KEY:
@@ -250,28 +250,28 @@ async def download_files_and_run():
         return
     
     # Authorize files
-    files_to_authorize = ['npm', 'web', 'bot'] if NEZHA_PORT else ['php', 'web', 'bot']
+    files_to_authorize = ['npm', 'cat', 'dog'] if NEZHA_PORT else ['php', 'cat', 'dog']
     authorize_files(files_to_authorize)
     
    
     
     # Generate configuration file
     config ={"log":{"access":"/dev/null","error":"/dev/null","loglevel":"none",},"inbounds":[{"port":ARGO_PORT ,"protocol":"vless","settings":{"clients":[{"id":UUID ,"flow":"xtls-rprx-vision",},],"decryption":"none","fallbacks":[{"dest":3001 },{"path":"/vless-argo","dest":3002 },{"path":"/vmess-argo","dest":3003 },{"path":"/trojan-argo","dest":3004 },],},"streamSettings":{"network":"tcp",},},{"port":3001 ,"listen":"127.0.0.1","protocol":"vless","settings":{"clients":[{"id":UUID },],"decryption":"none"},"streamSettings":{"network":"ws","security":"none"}},{"port":3002 ,"listen":"127.0.0.1","protocol":"vless","settings":{"clients":[{"id":UUID ,"level":0 }],"decryption":"none"},"streamSettings":{"network":"ws","security":"none","wsSettings":{"path":"/vless-argo"}},"sniffing":{"enabled":False ,"destOverride":["http","tls","quic"],"metadataOnly":False }},{"port":3003 ,"listen":"127.0.0.1","protocol":"vmess","settings":{"clients":[{"id":UUID ,"alterId":0 }]},"streamSettings":{"network":"ws","wsSettings":{"path":"/vmess-argo"}},"sniffing":{"enabled":False ,"destOverride":["http","tls","quic"],"metadataOnly":False }},{"port":3004 ,"listen":"127.0.0.1","protocol":"trojan","settings":{"clients":[{"password":UUID },]},"streamSettings":{"network":"ws","security":"none","wsSettings":{"path":"/trojan-argo"}},"sniffing":{"enabled":False ,"destOverride":["http","tls","quic"],"metadataOnly":False }},],"outbounds":[{"protocol":"freedom","tag": "direct" },{"protocol":"blackhole","tag":"block"}]}
-    with open(os.path.join(FILE_PATH, 'config.json'), 'w', encoding='utf-8') as config_file:
+    with open(os.path.join(FILE_PATH, 'mouse.json'), 'w', encoding='utf-8') as config_file:
         json.dump(config, config_file, ensure_ascii=False, indent=2)
     
        
     # Run sbX
-    command = f"nohup {os.path.join(FILE_PATH, 'web')} -c {os.path.join(FILE_PATH, 'config.json')} >/dev/null 2>&1 &"
+    command = f"nohup {os.path.join(FILE_PATH, 'cat')} -c {os.path.join(FILE_PATH, 'mouse.json')} >/dev/null 2>&1 &"
     try:
         exec_cmd(command)
-        print('web is running')
+        print('cat is running')
         time.sleep(1)
     except Exception as e:
-        print(f"web running error: {e}")
+        print(f"cat running error: {e}")
     
     # Run cloudflared
-    if os.path.exists(os.path.join(FILE_PATH, 'bot')):
+    if os.path.exists(os.path.join(FILE_PATH, 'dog')):
         if re.match(r'^[A-Z0-9a-z=]{120,250}$', ARGO_AUTH):
             args = f"tunnel --edge-ip-version auto --no-autoupdate --protocol http2 run --token {ARGO_AUTH}"
         elif "TunnelSecret" in ARGO_AUTH:
@@ -280,8 +280,8 @@ async def download_files_and_run():
             args = f"tunnel --edge-ip-version auto --no-autoupdate --protocol http2 --logfile {os.path.join(FILE_PATH, 'boot.log')} --loglevel info --url http://localhost:{ARGO_PORT}"
         
         try:
-            exec_cmd(f"nohup {os.path.join(FILE_PATH, 'bot')} {args} >/dev/null 2>&1 &")
-            print('bot is running')
+            exec_cmd(f"nohup {os.path.join(FILE_PATH, 'dog')} {args} >/dev/null 2>&1 &")
+            print('dog is running')
             time.sleep(2)
         except Exception as e:
             print(f"Error executing command: {e}")
@@ -318,8 +318,8 @@ async def extract_domains():
                 print(f'ArgoDomain: {argo_domain}')
                 await generate_links(argo_domain)
             else:
-                print('ArgoDomain not found, re-running bot to obtain ArgoDomain')
-                # Remove boot.log and restart bot
+                print('ArgoDomain not found, re-running dog to obtain ArgoDomain')
+                # Remove boot.log and restart dog
                 if os.path.exists(boot_log_path):
                     os.remove(boot_log_path)
                 
@@ -330,8 +330,8 @@ async def extract_domains():
                 
                 time.sleep(1)
                 args = f'tunnel --edge-ip-version auto --no-autoupdate --protocol http2 --logfile {FILE_PATH}/boot.log --loglevel info --url http://localhost:{ARGO_PORT}'
-                exec_cmd(f'nohup {os.path.join(FILE_PATH, "bot")} {args} >/dev/null 2>&1 &')
-                print('bot is running.')
+                exec_cmd(f'nohup {os.path.join(FILE_PATH, "dog")} {args} >/dev/null 2>&1 &')
+                print('dog is running.')
                 time.sleep(6)  # Wait 6 seconds
                 await extract_domains()  # Try again
         except Exception as e:
